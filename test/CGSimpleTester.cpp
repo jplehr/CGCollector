@@ -1,11 +1,9 @@
 #include "nlohmann/json.hpp"
 
-#include <iostream>
 #include <fstream>
-
+#include <iostream>
 
 int main(int argc, char **argv) {
-
   if (argc != 3) {
     std::cerr << "Usage: " << argv[0] << " groundtruth.json collector-result.ipcg" << std::endl;
   }
@@ -31,6 +29,6 @@ int main(int argc, char **argv) {
   } else {
     std::cerr << "Test failure" << std::endl;
 
-    return 0;
+    return 1;
   }
 }

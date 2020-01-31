@@ -28,25 +28,28 @@ else
   cgcollectorExe=../build/tools/cgcollector
 fi
 
-tests=(0001 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019 0020 0021)
+tests=(0001 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019 0020 0021 0022 0023 0024 0025 0026 0027 0028 0029 0030 0031 0032 0033 0034 0035 0036 0037 0038 0100 0101 0102 0103)
 
-failures=0
+fails=0
 
 for tc in ${tests[@]}; do
-	tfile=$tc.cpp
+  tfile=$tc.cpp
 	gfile=$tc.ipcg
 	tgt=$tc.gtipcg
 
-
 	$cgcollectorExe ./input/$tfile --
 	$testerExe ./input/$tgt ./input/$gfile
-	if [ $? -eq 1 ]; then
-		echo "Failure for file: $gfile. Keeping generated file for inspection"
-		let failures= $failures + 1
-	else
-		rm ./input/$gfile
+
+	if [ $? -eq 1 ]; then 
+		echo "Failure for file: $gfile. Keeping generated file for inspection" 
+		fails=$((fails + 1))
+  else 
+		rm ./input/$gfile 
 	fi
+
+	echo "Failuers: $fails"
+
 done
 
-echo "$failures failures occured when running tests"
-exit $failures
+echo -e "$fails failures occured when running tests"
+exit $fails

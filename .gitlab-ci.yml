@@ -1,0 +1,61 @@
+# File: .gitlab-ci.yml
+# License: Part of the PIRA proect. Licensed under BSD 3 clause license. See LICENSE.txt file at https://github.com/jplehr/pira/LICENSE.txt
+# Description: File to configure our Gitlab CI
+
+# Stages
+stages:
+  - download
+  - build
+  - test
+  - install
+
+default:
+  after_script:
+    - rm -rf $(dirname $(echo $SSH_AUTH_SOCK))
+    - ssh-agent -k
+
+.lb-setup: &lb-setup
+  - eval $(ssh-agent -s)
+  - ssh-add ~/.ssh/gitlab_rsa
+  - module use /home/groups/sc/modules/modulefiles
+  - module load gcc/8 git clang/9.0 cmake python/3 openmpi
+
+run-dowload:
+  stage: download
+  tags:
+    - pira, cluster
+  before_script: *lb-setup
+  variables:
+    GIT_STRATEGY: clone
+  script:
+    - git clone https://github.com/nlohmann/json
+
+run-build:
+  stage: build
+  tags:
+    - pira, cluster
+  before_script: *lb-setup
+  variables:
+    GIT_STRATEGY: fetch
+  script:
+    - mkdir build && cd build
+    - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/cgcollector-test-install -DJSON_INCLUDE_PATH=../json/single_include ..
+    - make -j $(cat /proc/cpuinfo | grep processor | wc -l)
+
+run-test:
+  stage: test
+  tags:
+    - pira, cluster
+  before_script: *lb-setup
+  variables:
+    GIT_STRATEGY: fetch
+  script:
+    - cd test && ./run_simple_test.sh
+
+run-install:
+  stage: install
+  tags:
+    - pira, cluster
+  before_script: *lb-setup
+  script:
+    - echo "Install test"

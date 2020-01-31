@@ -14,7 +14,7 @@ default_compile_options(cgsimpletester)
 install(
   TARGETS cgsimpletester
   EXPORT ${TARGETS_EXPORT_NAME}
-  RUNTIME DESTINATION bin
+	RUNTIME DESTINATION bin
 )
 
 configure_package_config_file(

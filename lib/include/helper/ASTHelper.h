@@ -13,5 +13,7 @@ int getNumStmtsInCXXForRangeStmt(clang::CXXForRangeStmt *frs);
 int getNumStmtsInDoStmt(clang::DoStmt *ds);
 int getNumStmtsInTryStmt(clang::CXXTryStmt *tryst);
 int getNumStmtsInCatchStmt(clang::CXXCatchStmt *catchst);
+int getNumStmtsInSwitchCase(clang::SwitchStmt *scStmt);
+int getNumStmtsInCaseStmt(clang::CaseStmt *cStmt);
 
 #endif

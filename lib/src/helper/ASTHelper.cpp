@@ -24,10 +24,34 @@ int getNumStmtsInStmt(clang::Stmt *d) {
     numStmts += getNumStmtsInDoStmt(llvm::dyn_cast<clang::DoStmt>(d));
   } else if (llvm::isa<clang::CXXTryStmt>(d)) {
     numStmts += getNumStmtsInTryStmt(llvm::dyn_cast<clang::CXXTryStmt>(d));
+  } else if (llvm::isa<clang::SwitchStmt>(d)) {
+    numStmts += getNumStmtsInSwitchCase(llvm::dyn_cast<clang::SwitchStmt>(d));
+  } else if (llvm::isa<clang::CaseStmt>(d)) {
+    numStmts += getNumStmtsInCaseStmt(llvm::dyn_cast<clang::CaseStmt>(d));
   } else {
-    numStmts += 1;
+    if (! llvm::isa<clang::DefaultStmt>(d)) {
+      numStmts += 1;
+    }
   }
   return numStmts;
+}
+
+int getNumStmtsInSwitchCase(clang::SwitchStmt *scStmt) {
+  int numStmts = 1;
+
+  for (auto child : scStmt->children()) {
+    numStmts += getNumStmtsInStmt(child);
+  }
+
+  return numStmts;
+}
+
+int getNumStmtsInCaseStmt(clang::CaseStmt *cStmt){
+  if (cStmt == nullptr) {
+    return 0;
+  }
+
+  return getNumStmtsInStmt(cStmt->getSubStmt());
 }
 
 int getNumStmtsInTryStmt(clang::CXXTryStmt *tryst) {
